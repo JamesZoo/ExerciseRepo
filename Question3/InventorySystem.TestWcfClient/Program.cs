@@ -4,22 +4,29 @@ namespace InventorySystem.TestWcfClient
 {
     using System.ServiceModel;
     using System.Threading.Tasks;
-    using Proxy;
+    using InventorySystem.Client;
+
 
     class Program
     {
         static async Task Main(string[] args)
         {
-            var client = new InventoryServiceClient(new WSHttpBinding(), new EndpointAddress("http://localhost:12345/WCF/InventoryService.svc"));
+            using (var client = InventoryServiceClientFactory.Instance.CreateAutoRecoveryClient("http://localhost:12345/WCF/InventoryService.svc"))
+            {
+                for (int i = 0; i < 100; ++i)
+                {
+                    try
+                    {
+                        var result = await client.GetInventoryInfoAsync().ConfigureAwait(false);
+                        Console.WriteLine(result.LastUpdateTime);
+                    }
+                    catch (Exception ex) when (ex is CommunicationException || ex is TimeoutException)
+                    {
+                        Console.WriteLine(ex.GetType().FullName);
+                    }
 
-            try
-            {
-                var result = await client.GetInventoryInfoAsync().ConfigureAwait(false);
-                Console.WriteLine(result.LastUpdateTime);
-            }
-            catch (CommunicationException ex)
-            {
-                Console.WriteLine(ex);
+                    await Task.Delay(500).ConfigureAwait(false);
+                }
             }
 
             Console.WriteLine("Press ENTER to end...");

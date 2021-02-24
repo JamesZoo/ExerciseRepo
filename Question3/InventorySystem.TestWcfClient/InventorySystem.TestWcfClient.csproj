@@ -6,10 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\InventorySystem.Contract\InventorySystem.Contract.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
 
@@ -19,6 +15,10 @@
 
   <ItemGroup>
     <Folder Include="Connected Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\InventorySystem.Client\InventorySystem.Client.csproj" />
   </ItemGroup>
 
 </Project>
