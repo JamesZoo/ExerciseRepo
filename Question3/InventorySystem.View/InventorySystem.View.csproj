@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
+<Project Sdk="Microsoft.NET.Sdk.WindowsDesktop">
 
   <PropertyGroup>
-    <OutputType>WinExe</OutputType>
+    <TargetFramework>net48</TargetFramework>
     <TargetFramework>net48</TargetFramework>
     <UseWPF>True</UseWPF>
     <EmbeddedResourceUseDependentUponConvention>true</EmbeddedResourceUseDependentUponConvention>
@@ -9,11 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="UniversalWPF" Version="0.9.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="..\InventorySystem.View\InventorySystem.View.csproj" />
+    <Folder Include="Views\" />
   </ItemGroup>
 
 </Project>
