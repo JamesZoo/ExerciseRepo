@@ -1,15 +1,24 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>net48</TargetFramework>
   </PropertyGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\InventorySystem.Contract\InventorySystem.Contract.csproj" />
   </ItemGroup>
+
   <ItemGroup>
     <Reference Include="System.ServiceModel" />
   </ItemGroup>
+
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <WCFMetadata Include="Connected Services" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Connected Services\" />
+  </ItemGroup>
+
 </Project>
