@@ -33,7 +33,8 @@ namespace InventorySystem.Client
             {
                 client.Abort();
                 this.internalClient = factory.CreateClient(endpointUri);
-                throw;
+
+                return new OperationResult() { ErrorCode = ErrorCode.Disconnected };
             }
         }
 
@@ -47,7 +48,8 @@ namespace InventorySystem.Client
             {
                 this.internalClient.Abort();
                 this.internalClient = factory.CreateClient(endpointUri);
-                throw;
+
+                return new GetInventoryInfoResult() { ErrorCode = ErrorCode.Disconnected };
             }
         }
 

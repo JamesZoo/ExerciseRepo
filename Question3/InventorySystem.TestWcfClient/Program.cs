@@ -15,15 +15,8 @@ namespace InventorySystem.TestWcfClient
             {
                 for (int i = 0; i < 100; ++i)
                 {
-                    try
-                    {
-                        var result = await client.GetInventoryInfoAsync().ConfigureAwait(false);
-                        Console.WriteLine(result.LastUpdateTime);
-                    }
-                    catch (Exception ex) when (ex is CommunicationException || ex is TimeoutException)
-                    {
-                        Console.WriteLine(ex.GetType().FullName);
-                    }
+                    var result = await client.CheckUpdateAsync().ConfigureAwait(false);
+                    Console.WriteLine($"CheckUpdateAsync: ErrorCode: {result.ErrorCode}, LastUpdateTime: {result.LastUpdateTime}");
 
                     await Task.Delay(500).ConfigureAwait(false);
                 }
