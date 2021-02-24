@@ -9,11 +9,13 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventorySystem.Contract", 
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventorySystem.TestWcfClient", "InventorySystem.TestWcfClient\InventorySystem.TestWcfClient.csproj", "{63755648-C508-46D3-A61D-16337960F423}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventorySystem", "InventorySystem\InventorySystem.csproj", "{3BFA550B-ECC5-4B83-AB1F-3C80D48B908A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventorySystem", "InventorySystem\InventorySystem.csproj", "{3BFA550B-ECC5-4B83-AB1F-3C80D48B908A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventorySystem.View", "InventorySystem.View\InventorySystem.View.csproj", "{46B269F9-DA63-4678-8896-9E5827E3F66B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventorySystem.View", "InventorySystem.View\InventorySystem.View.csproj", "{46B269F9-DA63-4678-8896-9E5827E3F66B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WCF Libraries", "WCF Libraries", "{2EC783F6-21F5-41CD-BE98-C7FC64D973DD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventorySystem.Client", "InventorySystem.Client\InventorySystem.Client.csproj", "{D4AE553D-C08C-4D33-82BE-1D719B1FA6A1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -41,6 +43,10 @@ Global
 		{46B269F9-DA63-4678-8896-9E5827E3F66B}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{46B269F9-DA63-4678-8896-9E5827E3F66B}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{46B269F9-DA63-4678-8896-9E5827E3F66B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D4AE553D-C08C-4D33-82BE-1D719B1FA6A1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D4AE553D-C08C-4D33-82BE-1D719B1FA6A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D4AE553D-C08C-4D33-82BE-1D719B1FA6A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D4AE553D-C08C-4D33-82BE-1D719B1FA6A1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -49,6 +55,7 @@ Global
 		{B73BEED4-2EFE-408E-A6D3-B3181ED72C9F} = {2EC783F6-21F5-41CD-BE98-C7FC64D973DD}
 		{2242685D-8324-46A3-ADE8-44DDAF302A82} = {2EC783F6-21F5-41CD-BE98-C7FC64D973DD}
 		{63755648-C508-46D3-A61D-16337960F423} = {2EC783F6-21F5-41CD-BE98-C7FC64D973DD}
+		{D4AE553D-C08C-4D33-82BE-1D719B1FA6A1} = {2EC783F6-21F5-41CD-BE98-C7FC64D973DD}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {2EF0C867-75CF-45D5-AE1E-5EA3F6F22C69}
