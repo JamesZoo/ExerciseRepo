@@ -6,6 +6,13 @@
         xmlns:local="clr-namespace:InventorySystem"
         Title="MainWindow" Height="900" Width="1300">
   <Grid>
-
+    <TwoPaneView PanePriority="Pane1" Pane2Length="Auto">
+      <TwoPaneView.Pane1>
+        <TextBlock Text="Panel1" Background="LightBlue"></TextBlock>
+      </TwoPaneView.Pane1>
+      <TwoPaneView.Pane2>
+        <TextBlock Text="Panel2"></TextBlock>
+      </TwoPaneView.Pane2>
+    </TwoPaneView>
   </Grid>
 </Window>
