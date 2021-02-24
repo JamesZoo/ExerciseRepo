@@ -4,14 +4,27 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:InventorySystem"
-        Title="MainWindow" Height="900" Width="1300">
+        xmlns:views="clr-namespace:InventorySystem.View.Views;assembly=InventorySystem.View"
+        Title="MainWindow" Height="700" Width="1000" MinHeight="700" MinWidth="1000">
   <Grid>
-    <TwoPaneView PanePriority="Pane1" Pane2Length="Auto">
+    <TwoPaneView PanePriority="Pane1" Pane1Length="2*" Pane2Length="*">
       <TwoPaneView.Pane1>
-        <TextBlock Text="Panel1" Background="LightBlue"></TextBlock>
+        <views:InventoryOverview/>
       </TwoPaneView.Pane1>
       <TwoPaneView.Pane2>
-        <TextBlock Text="Panel2"></TextBlock>
+        <StackPanel>
+          <TextBlock Text="Evaluating Theme"/>
+          <TextBox Width="100" Margin="0,10"></TextBox>
+          <Button Content="button" Width="100"/>
+          <CheckBox />
+          <RadioButton />
+          <ComboBox IsEditable="True" Text="hello" Width="100" />
+          <ComboBox IsEditable="False" Width="100"></ComboBox>
+          <ListView Width="100">
+            <ListViewItem />
+            <ListViewItem />
+          </ListView>
+        </StackPanel>
       </TwoPaneView.Pane2>
     </TwoPaneView>
   </Grid>
