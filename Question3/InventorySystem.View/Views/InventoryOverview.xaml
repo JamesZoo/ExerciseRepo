@@ -55,7 +55,10 @@
         <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
 
-      <TextBlock Grid.Column="0" Text="Connected"/>
+      <StackPanel Grid.Column="0" Orientation="Horizontal">
+        <TextBlock Text="Status:"></TextBlock>
+        <TextBlock x:Name="ConnectionStatusText" Margin="10,0,0,0" Text="Unknown" />
+      </StackPanel>
       <TextBlock Grid.Column="1" Text="LastUpdateTime:" Margin="10,0" HorizontalAlignment="Right"></TextBlock>
       <TextBlock Grid.Column="2" Text="24/02/2021 20:10:23"/>
     </Grid>

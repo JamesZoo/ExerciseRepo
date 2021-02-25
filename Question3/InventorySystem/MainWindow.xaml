@@ -5,11 +5,12 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:InventorySystem"
         xmlns:views="clr-namespace:InventorySystem.View.Views;assembly=InventorySystem.View"
-        Title="MainWindow" Height="700" Width="1000" MinHeight="700" MinWidth="1000">
+        Title="MainWindow" Height="700" Width="1000" MinHeight="700" MinWidth="1000"
+        Loaded="MainWindow_OnLoaded" Closed="MainWindow_OnClosed">
   <Grid>
     <TwoPaneView PanePriority="Pane1" Pane1Length="2*" Pane2Length="*">
       <TwoPaneView.Pane1>
-        <views:InventoryOverview/>
+        <views:InventoryOverview x:Name="InventoryOverview"/>
       </TwoPaneView.Pane1>
       <TwoPaneView.Pane2>
         <StackPanel>
