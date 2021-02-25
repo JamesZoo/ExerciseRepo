@@ -136,7 +136,7 @@ namespace InventorySystem.ViewModel
                         }
                     }
 
-                    await Task.Delay(5000, cancellationToken).ConfigureAwait(false);
+                    await Task.Delay(2000, cancellationToken).ConfigureAwait(false);
                 }
             }
             catch (Exception ex) when (ex is TaskCanceledException || ex is OperationCanceledException)

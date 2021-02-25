@@ -12,7 +12,7 @@
     {
         public async Task<CheckUpdateResult> CheckUpdateAsync()
         {
-            await Task.Delay(3000).ConfigureAwait(false);
+            await Task.Delay(1500).ConfigureAwait(false);
             return new CheckUpdateResult()
             {
                 LastUpdateTime = DateTimeOffset.Now,
@@ -21,7 +21,7 @@
 
         public async Task<GetInventoryInfoResult> GetInventoryInfoAsync()
         {
-            await Task.Delay(3000).ConfigureAwait(false);
+            await Task.Delay(1500).ConfigureAwait(false);
             return new GetInventoryInfoResult()
             {
                 InventoryInfo = new InventoryInfo()

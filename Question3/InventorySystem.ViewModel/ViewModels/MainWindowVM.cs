@@ -28,7 +28,7 @@
 
         public void Dispose()
         {
-            this.MessengerInstance.Unregister<UpdateConnectionStatusMessage>(this);
+            this.MessengerInstance.Unregister(this);
         }
 
         private void OnReceiveUpdateConnectionStatusMessage(UpdateConnectionStatusMessage message)

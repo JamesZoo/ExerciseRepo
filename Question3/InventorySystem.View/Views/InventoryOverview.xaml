@@ -28,7 +28,7 @@
       <TextBlock Grid.Column="0" Margin="0,0,0,10" Text="Inventory Overview" FontSize="24" VerticalAlignment="Top"/>
 
 
-      <StackPanel x:Name="searchPanel" Grid.Column="1" Orientation="Horizontal"  Margin="0,0,30,0" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+      <StackPanel x:Name="SearchPanel" Grid.Column="1" Orientation="Horizontal"  Margin="0,0,30,0" VerticalAlignment="Bottom" HorizontalAlignment="Right">
         <TextBlock Text="Search:" FontSize="14" VerticalAlignment="Center"/>
         <searchControl:LiveSearchTextBox Margin="10,0,0,0"
                                          Width="200"
@@ -46,6 +46,6 @@
               FontSize="14"/>
     </Grid>
 
-    <DataGrid Grid.Row="1"/>
+    <ListView Grid.Row="1" ItemsSource="{Binding Products}"/>
   </Grid>
 </UserControl>
