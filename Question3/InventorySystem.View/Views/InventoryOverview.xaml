@@ -7,11 +7,8 @@
              xmlns:searchControl="clr-namespace:LiveSearchTextBoxControl;assembly=LiveSearchTextBoxControl"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
-  <UserControl.Resources>
 
-  </UserControl.Resources>
-  
-  <Grid Margin="10">
+  <Grid IsEnabled="{Binding IsReady}" Margin="10">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
@@ -27,8 +24,7 @@
 
       <TextBlock Grid.Column="0" Margin="0,0,0,10" Text="Inventory Overview" FontSize="24" VerticalAlignment="Top"/>
 
-
-      <StackPanel x:Name="SearchPanel" Grid.Column="1" Orientation="Horizontal"  Margin="0,0,30,0" VerticalAlignment="Bottom" HorizontalAlignment="Right">
+      <StackPanel x:Name="SearchPanel" Grid.Column="1" Orientation="Horizontal" Margin="0,0,30,0" VerticalAlignment="Bottom" HorizontalAlignment="Right">
         <TextBlock Text="Search:" FontSize="14" VerticalAlignment="Center"/>
         <searchControl:LiveSearchTextBox Margin="10,0,0,0"
                                          Width="200"
@@ -46,6 +42,17 @@
               FontSize="14"/>
     </Grid>
 
-    <ListView Grid.Row="1" ItemsSource="{Binding Products}"/>
+    <DataGrid Grid.Row="1" 
+              ItemsSource="{Binding Products}"
+              IsReadOnly="True"
+              AutoGenerateColumns="False"
+              AlternationCount="2"
+              AlternatingRowBackground="LightBlue">
+      <DataGrid.Columns>
+        <DataGridTextColumn Header="Product Name" Width="2*" CanUserSort="True" Binding="{Binding ProductName}"/>
+        <DataGridTextColumn Header="Quantity" Width="Auto" CanUserSort="True" Binding="{Binding Quantity}"/>
+        <DataGridTextColumn Header="NewValue" Width="*" CanUserSort="True" Binding="{Binding DisplayUnit}"/>
+      </DataGrid.Columns>
+    </DataGrid>
   </Grid>
 </UserControl>

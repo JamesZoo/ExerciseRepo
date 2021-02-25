@@ -13,13 +13,23 @@
     {
         private readonly Dictionary<Guid, ProductInfoVM> productsLookup = new Dictionary<Guid, ProductInfoVM>();
         private readonly ObservableCollection<ProductInfoVM> products = new ObservableCollection<ProductInfoVM>();
+        private bool _isReady = true;
+
+        private bool hasSyncedBefore = false;
 
         public InventoryOverviewVM()
         {
             this.MessengerInstance.Register<UpdateInventoryMessage>(this, OnUpdateInventory);
+            this.MessengerInstance.Register<UpdateConnectionStatusMessage>(this, OnConnectionStatusChanged);
         }
 
         public ObservableCollection<ProductInfoVM> Products => this.products;
+
+        public bool IsReady
+        {
+            get => this._isReady;
+            set => this.Set(ref _isReady, value);
+        }
 
         public void Dispose()
         {
@@ -53,6 +63,28 @@
                     this.productsLookup[productInfo.ProductCode] = newProductInfoVm;
                     this.products.Add(newProductInfoVm);
                 }
+            }
+        }
+
+        private void OnConnectionStatusChanged(UpdateConnectionStatusMessage message)
+        {
+            switch (message.Content)
+            {
+                case ConnectionStatus.Unknown:
+                case ConnectionStatus.Disconnected:
+                case ConnectionStatus.Connecting:
+                    this.IsReady = false;
+                    break;
+                case ConnectionStatus.Syncing:
+                case ConnectionStatus.OutOfSync:
+                    this.IsReady = this.hasSyncedBefore;
+                    break;
+                case ConnectionStatus.Synced:
+                    this.IsReady = true;
+                    this.hasSyncedBefore = true;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
     }

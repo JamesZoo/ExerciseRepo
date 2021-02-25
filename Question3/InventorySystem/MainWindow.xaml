@@ -18,19 +18,7 @@
       </TwoPaneView.Pane1>
       
       <TwoPaneView.Pane2>
-        <StackPanel>
-          <TextBlock Text="Evaluating Theme"/>
-          <TextBox Width="100" Margin="0,10"></TextBox>
-          <Button Content="button" Width="100"/>
-          <CheckBox />
-          <RadioButton />
-          <ComboBox IsEditable="True" Text="hello" Width="100" />
-          <ComboBox IsEditable="False" Width="100"></ComboBox>
-          <ListView Width="100">
-            <ListViewItem />
-            <ListViewItem />
-          </ListView>
-        </StackPanel>
+        <TextBlock Text="Orders Overview (Placeholder)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
       </TwoPaneView.Pane2>
     </TwoPaneView>
 
@@ -42,7 +30,7 @@
       </Grid.ColumnDefinitions>
 
       <StackPanel Grid.Column="0" Orientation="Horizontal">
-        <TextBlock Text="Status"></TextBlock>
+        <TextBlock Text="Status:"></TextBlock>
         <TextBlock Margin="10,0,0,0" Text="{Binding ConnectionStatus}" />
       </StackPanel>
       <TextBlock Grid.Column="1" Text="LastUpdateTime:" Margin="10,0" HorizontalAlignment="Right"></TextBlock>

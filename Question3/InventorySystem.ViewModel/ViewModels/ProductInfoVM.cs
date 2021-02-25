@@ -7,7 +7,7 @@
     /// <summary>
     /// The VM for each product and quality in Inventory Overview.
     /// </summary>
-    public sealed class ProductInfoVM : ViewModelBase
+    public sealed class ProductInfoVM : ObservableObject
     {
         private string productName;
         private uint quantity;
