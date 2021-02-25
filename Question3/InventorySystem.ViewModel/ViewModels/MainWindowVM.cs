@@ -44,9 +44,6 @@
                 case ViewModel.ConnectionStatus.Connecting:
                     this.ConnectionStatus = "Connecting to Inventory";
                     break;
-                case ViewModel.ConnectionStatus.Connected:
-                    this.ConnectionStatus = "Connected";
-                    break;
                 case ViewModel.ConnectionStatus.Syncing:
                     this.ConnectionStatus = "Synchronizing with Inventory";
                     break;
