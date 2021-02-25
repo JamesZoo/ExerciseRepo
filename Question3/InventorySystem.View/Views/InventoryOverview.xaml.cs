@@ -13,11 +13,5 @@
         {
             InitializeComponent();
         }
-
-        public void UpdateConnectionStatus(ConnectionStatus connectionStatus)
-        {
-            // Todo: move the handling to VM once the VM is created.
-            this.ConnectionStatusText.Text = connectionStatus.ToString();
-        }
     }
 }

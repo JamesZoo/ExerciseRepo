@@ -4,6 +4,8 @@ namespace InventorySystem
     using System;
     using System.Windows;
     using System.Windows.Controls;
+    using Client;
+    using GalaSoft.MvvmLight.Messaging;
     using ViewModel;
 
     /// <summary>
@@ -11,15 +13,20 @@ namespace InventorySystem
     /// </summary>
     public partial class MainWindow : Window
     {
+        private readonly IInventoryServiceClient inventoryServiceClient;
         private readonly InventoryMonitor inventoryMonitor;
+        
+        private readonly MainWindowVM mainWindowVm;
 
         public MainWindow()
         {
-            inventoryMonitor = new InventoryMonitor("http://localhost:12345/WCF/InventoryService.svc", this.Dispatcher);
-
-            inventoryMonitor.ConnectionStatusChanged += InventoryMonitor_ConnectionStatusChanged;
-            inventoryMonitor.ProductInfoChanged += InventoryMonitor_ProductInfoChanged;
             InitializeComponent();
+
+            inventoryServiceClient = InventoryServiceClientFactory.Instance.CreateAutoRecoveryClient("http://localhost:12345/WCF/InventoryService.svc");
+            inventoryMonitor = new InventoryMonitor(this.inventoryServiceClient, this.Dispatcher, Messenger.Default);
+
+            this.mainWindowVm = new MainWindowVM();
+            this.DataContext = this.mainWindowVm;
         }
 
         private void MainWindow_OnLoaded(object sender, RoutedEventArgs e)
@@ -29,17 +36,9 @@ namespace InventorySystem
 
         private void MainWindow_OnClosed(object sender, EventArgs e)
         {
+            this.mainWindowVm.Dispose();
             this.inventoryMonitor.Dispose();
-        }
-
-        private void InventoryMonitor_ConnectionStatusChanged(object sender, ConnectionStatus e)
-        {
-            this.InventoryOverview.UpdateConnectionStatus(e);
-        }
-
-        private void InventoryMonitor_ProductInfoChanged(object sender, System.Collections.Generic.List<Contract.ProductInfo> e)
-        {
-            throw new NotImplementedException();
+            this.inventoryServiceClient.Dispose();
         }
     }
 }

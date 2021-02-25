@@ -5,10 +5,11 @@ namespace InventorySystem.ViewModel
     using System;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Runtime.Remoting.Messaging;
     using System.Threading;
     using System.Threading.Tasks;
     using System.Windows.Threading;
-
+    using GalaSoft.MvvmLight.Messaging;
     using InventorySystem.Client;
     using InventorySystem.Contract;
 
@@ -18,6 +19,9 @@ namespace InventorySystem.ViewModel
         Disconnected,
         Connecting,
         Connected,
+        Syncing,
+        OutOfSync,
+        Synced,
     }
 
     /// <summary>
@@ -27,8 +31,10 @@ namespace InventorySystem.ViewModel
     /// </summary>
     public sealed class InventoryMonitor : IDisposable
     {
-        private readonly Dispatcher dispatcher;
         private readonly IInventoryServiceClient inventoryServiceClient;
+        private readonly Dispatcher dispatcher;
+        private readonly IMessenger messenger;
+
         private readonly CancellationTokenSource monitoringTaskCancellation = new CancellationTokenSource();
 
         /// <summary>
@@ -41,22 +47,17 @@ namespace InventorySystem.ViewModel
         /// </summary>
         DateTimeOffset lastUpdateTime = DateTimeOffset.MinValue;
 
-        public InventoryMonitor(string inventoryServiceUri, Dispatcher dispatcher)
+        public InventoryMonitor(IInventoryServiceClient inventoryServiceClient, Dispatcher dispatcher, IMessenger messenger)
         {
-            _ = inventoryServiceUri ?? throw new ArgumentNullException(nameof(inventoryServiceUri));
+            this.inventoryServiceClient = inventoryServiceClient ?? throw new ArgumentNullException(nameof(inventoryServiceClient));
             this.dispatcher = dispatcher ?? throw new ArgumentNullException(nameof(dispatcher));
-            this.inventoryServiceClient = InventoryServiceClientFactory.Instance.CreateAutoRecoveryClient(inventoryServiceUri);
+            this.messenger = messenger ?? throw new ArgumentNullException(nameof(messenger));
         }
-
-        public event EventHandler<ConnectionStatus> ConnectionStatusChanged;
-
-        public event EventHandler<List<ProductInfo>> ProductInfoChanged;
 
         public void Dispose()
         {
             this.monitoringTaskCancellation.Cancel();
             this.monitoringTaskCancellation.Dispose();
-            this.inventoryServiceClient.Dispose();
         }
 
         public void StartMonitoring()
@@ -73,44 +74,64 @@ namespace InventorySystem.ViewModel
                 if (connectionStatus != newStatus)
                 {
                     connectionStatus = newStatus;
-                    this.FireConnectionStatusChangedEventOnDispatcher(connectionStatus);
+                    SendMessageOnDispatcher(new UpdateConnectionStatusMessage(connectionStatus));
                 }
             }
 
+            // Business logic for synchronizing the inventory:
+            // Periodically check whether there is any inventory update.
+            // If update is detected, retreive the latest inventory.
             try
             {
                 UpdateConnectionStatus(ConnectionStatus.Disconnected);
                 while (!cancellationToken.IsCancellationRequested)
                 {
+                    cancellationToken.ThrowIfCancellationRequested();
                     if (connectionStatus == ConnectionStatus.Disconnected)
                     {
                         UpdateConnectionStatus(ConnectionStatus.Connecting);
                     }
 
-                    cancellationToken.ThrowIfCancellationRequested();
-                    var operationResult = await this.inventoryServiceClient.CheckUpdateAsync().ConfigureAwait(false);
-                    if (operationResult.ErrorCode == ErrorCode.Disconnected)
+                    var checkUpdateResult = await this.inventoryServiceClient.CheckUpdateAsync().ConfigureAwait(false);
+                    if (checkUpdateResult.ErrorCode == ErrorCode.Disconnected)
                     {
                         UpdateConnectionStatus(ConnectionStatus.Disconnected);
                     }
                     else
                     {
                         UpdateConnectionStatus(ConnectionStatus.Connected);
-                        if (operationResult.ErrorCode == ErrorCode.Success)
+                        if (checkUpdateResult.ErrorCode == ErrorCode.Success)
                         {
-                            if (this.lastUpdateTime < operationResult.LastUpdateTime)
+                            cancellationToken.ThrowIfCancellationRequested();
+
+                            // Synchronizing the inventory if the local timestamp is old.
+                            if (this.lastUpdateTime < checkUpdateResult.LastUpdateTime)
                             {
-                                cancellationToken.ThrowIfCancellationRequested();
+                                UpdateConnectionStatus(ConnectionStatus.Syncing);
                                 var getInventoryInfoResult = await this.inventoryServiceClient.GetInventoryInfoAsync().ConfigureAwait(false);
+                                
                                 if (getInventoryInfoResult.ErrorCode == ErrorCode.Disconnected)
                                 {
                                     UpdateConnectionStatus(ConnectionStatus.Disconnected);
                                 }
                                 else
                                 {
-                                    this.lastUpdateTime = getInventoryInfoResult.LastUpdateTime;
-                                    this.FireProductInfoChangedEventOnDispatcher(getInventoryInfoResult.ProductInfos);
+                                    UpdateConnectionStatus(ConnectionStatus.Connected);
+                                    if (getInventoryInfoResult.ErrorCode == ErrorCode.Success)
+                                    {
+                                        UpdateConnectionStatus(ConnectionStatus.Synced);
+                                        this.lastUpdateTime = getInventoryInfoResult.InventoryInfo.LastUpdateTime;
+                                        SendMessageOnDispatcher(new UpdateInventoryMessage(getInventoryInfoResult.InventoryInfo));
+                                    }
+                                    else
+                                    {
+                                        UpdateConnectionStatus(ConnectionStatus.OutOfSync);
+                                    }
                                 }
+                            }
+                            else
+                            {
+                                UpdateConnectionStatus(ConnectionStatus.Synced);
                             }
                         }
                     }
@@ -124,14 +145,10 @@ namespace InventorySystem.ViewModel
             }
         }
 
-        private void FireConnectionStatusChangedEventOnDispatcher(ConnectionStatus connectionStatus)
+        private void SendMessageOnDispatcher<TMessage>(TMessage message)
+            where TMessage : MessageBase
         {
-            this.dispatcher.InvokeAsync(() => this.ConnectionStatusChanged?.Invoke(this, connectionStatus));
-        }
-
-        private void FireProductInfoChangedEventOnDispatcher(IEnumerable<ProductInfo> productInfos)
-        {
-            this.dispatcher.InvokeAsync(() => this.ProductInfoChanged?.Invoke(this, productInfos.ToList()));
+            this.dispatcher.InvokeAsync(() => this.messenger.Send(message));
         }
     }
 }

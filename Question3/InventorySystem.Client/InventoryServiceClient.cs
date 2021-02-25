@@ -18,7 +18,7 @@
         {
         }
         
-        public System.Threading.Tasks.Task<OperationResult> CheckUpdateAsync()
+        public System.Threading.Tasks.Task<CheckUpdateResult> CheckUpdateAsync()
         {
             return base.Channel.CheckUpdateAsync();
         }

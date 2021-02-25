@@ -13,11 +13,5 @@
         /// </summary>
         [DataMember]
         public ErrorCode ErrorCode { get; set; }
-
-        /// <summary>
-        /// Gets or sets the timestamp indicating when the last update to the inventory system was made.
-        /// </summary>
-        [DataMember]
-        public DateTimeOffset LastUpdateTime { get; set; }
     }
 }
