@@ -15,7 +15,6 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
-      <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
 
     <Grid x:Name="headerRow"
@@ -23,7 +22,7 @@
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width ="Auto"/>
         <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width ="Auto"/>
       </Grid.ColumnDefinitions>
 
       <TextBlock Grid.Column="0" Margin="0,0,0,10" Text="Inventory Overview" FontSize="24" VerticalAlignment="Top"/>
@@ -43,21 +42,10 @@
               Width="100"
               Height="30"
               VerticalAlignment="Bottom"
+              VerticalContentAlignment="Center"
               FontSize="14"/>
     </Grid>
 
     <DataGrid Grid.Row="1"/>
-
-    <Grid x:Name="statusRow" Grid.Row="2" Margin="0,5">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width ="Auto"/>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="Auto"/>
-      </Grid.ColumnDefinitions>
-
-      <TextBlock Grid.Column="0" Text="Connected"/>
-      <TextBlock Grid.Column="1" Text="LastUpdateTime:" Margin="10,0" HorizontalAlignment="Right"></TextBlock>
-      <TextBlock Grid.Column="2" Text="24/02/2021 20:10:23"/>
-    </Grid>
   </Grid>
 </UserControl>

@@ -5,12 +5,18 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:InventorySystem"
         xmlns:views="clr-namespace:InventorySystem.View.Views;assembly=InventorySystem.View"
-        Title="MainWindow" Height="700" Width="1000" MinHeight="700" MinWidth="1000">
-  <Grid>
+        Title="MainWindow" Height="700" Width="1000" MinHeight="700" MinWidth="1000"
+        Loaded="MainWindow_OnLoaded" Closed="MainWindow_OnClosed">
+  <Grid Margin="10">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
     <TwoPaneView PanePriority="Pane1" Pane1Length="2*" Pane2Length="*">
       <TwoPaneView.Pane1>
-        <views:InventoryOverview/>
+        <views:InventoryOverview x:Name="InventoryOverview" DataContext="{Binding InventoryOverviewVm}" />
       </TwoPaneView.Pane1>
+      
       <TwoPaneView.Pane2>
         <StackPanel>
           <TextBlock Text="Evaluating Theme"/>
@@ -27,5 +33,20 @@
         </StackPanel>
       </TwoPaneView.Pane2>
     </TwoPaneView>
+
+    <Grid x:Name="statusRow" Grid.Row="1" Margin="0,5">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width ="Auto"/>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
+      </Grid.ColumnDefinitions>
+
+      <StackPanel Grid.Column="0" Orientation="Horizontal">
+        <TextBlock Text="Status"></TextBlock>
+        <TextBlock Margin="10,0,0,0" Text="{Binding ConnectionStatus}" />
+      </StackPanel>
+      <TextBlock Grid.Column="1" Text="LastUpdateTime:" Margin="10,0" HorizontalAlignment="Right"></TextBlock>
+      <TextBlock Grid.Column="2" Text="24/02/2021 20:10:23"/>
+    </Grid>
   </Grid>
 </Window>

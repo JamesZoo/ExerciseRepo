@@ -1,0 +1,16 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <UseWPF>True</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MvvmLight" Version="5.4.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\InventorySystem.Client\InventorySystem.Client.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="WindowsBase" />
+  </ItemGroup>
+</Project>

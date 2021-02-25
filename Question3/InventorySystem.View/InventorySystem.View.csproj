@@ -2,14 +2,15 @@
 
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
-    <TargetFramework>net48</TargetFramework>
     <UseWPF>True</UseWPF>
-    <EmbeddedResourceUseDependentUponConvention>true</EmbeddedResourceUseDependentUponConvention>
-    <NeutralLanguage>en-US</NeutralLanguage>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="LiveSearchTextBoxControl" Version="0.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\InventorySystem.ViewModel\InventorySystem.ViewModel.csproj" />
   </ItemGroup>
 
 </Project>

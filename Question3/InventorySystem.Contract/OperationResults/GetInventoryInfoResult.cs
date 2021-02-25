@@ -12,6 +12,6 @@
     public sealed class GetInventoryInfoResult : OperationResult
     {
         [DataMember]
-        public List<ProductInfo> ProductInfos { get; set; }
+        public InventoryInfo InventoryInfo { get; set; }
     }
 }

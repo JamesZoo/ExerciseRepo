@@ -1,12 +1,13 @@
 ﻿namespace InventorySystem.Contract
 {
+    using System;
     using System.Runtime.Serialization;
 
     [DataContract]
     public sealed class ProductInfo
     {
         [DataMember]
-        public int ProductId { get; set; }
+        public Guid ProductCode { get; set; }
 
         [DataMember]
         public string ProductName { get; set; }

@@ -1,6 +1,5 @@
 ﻿namespace InventorySystem.Contract
 {
-    using System.Runtime.Serialization;
     using System.ServiceModel;
     using System.Threading.Tasks;
 
@@ -13,7 +12,7 @@
         /// </summary>
         /// <returns>The asynchronous task of this operation.</returns>
         [OperationContract]
-        Task<OperationResult> CheckUpdateAsync();
+        Task<CheckUpdateResult> CheckUpdateAsync();
 
         /// <summary>
         /// An expensive operation to retrieve the latest inventory info. The client should only call this operation if CheckUpdateAsync detects a difference in LastUpdateTime.

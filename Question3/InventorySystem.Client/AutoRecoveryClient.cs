@@ -22,7 +22,7 @@ namespace InventorySystem.Client
             this.internalClient = factory.CreateClient(endpointUri);
         }
 
-        public async Task<OperationResult> CheckUpdateAsync()
+        public async Task<CheckUpdateResult> CheckUpdateAsync()
         {
             var client = this.internalClient;
             try
@@ -34,7 +34,7 @@ namespace InventorySystem.Client
                 client.Abort();
                 this.internalClient = factory.CreateClient(endpointUri);
 
-                return new OperationResult() { ErrorCode = ErrorCode.Disconnected };
+                return new CheckUpdateResult { ErrorCode = ErrorCode.Disconnected };
             }
         }
 

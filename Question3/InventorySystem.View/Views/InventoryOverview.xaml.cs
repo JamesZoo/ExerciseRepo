@@ -1,6 +1,8 @@
 ﻿namespace InventorySystem.View.Views
 {
     using System.Windows.Controls;
+    
+    using InventorySystem.ViewModel;
 
     /// <summary>
     /// Interaction logic for InventoryOverview.xaml

@@ -10,10 +10,10 @@
     // NOTE: In order to launch WCF Test Client for testing this service, please select Service1.svc or Service1.svc.cs at the Solution Explorer and start debugging.
     public class InventoryService : IInventoryService
     {
-        public async Task<OperationResult> CheckUpdateAsync()
+        public async Task<CheckUpdateResult> CheckUpdateAsync()
         {
             await Task.Delay(3000).ConfigureAwait(false);
-            return new OperationResult()
+            return new CheckUpdateResult()
             {
                 LastUpdateTime = DateTimeOffset.Now,
             };
@@ -24,14 +24,19 @@
             await Task.Delay(3000).ConfigureAwait(false);
             return new GetInventoryInfoResult()
             {
-                LastUpdateTime = DateTimeOffset.Now,
-                ProductInfos = new List<ProductInfo>()
+                InventoryInfo = new InventoryInfo()
                 {
-                    new ProductInfo() { ProductId = 1, ProductName = "Victorian Coffee Beans 2KG", Quantity = (100, Unit.Package) },
-                    new ProductInfo() { ProductId = 2, ProductName = "A2 Full-Cream Milk 2L", Quantity = (50, Unit.Bottle) },
-                    new ProductInfo() { ProductId = 3, ProductName = "Truss Tomato", Quantity = (100, Unit.Kilogram) },
-                    new ProductInfo() { ProductId = 4, ProductName = "Iceberg Lettuce", Quantity = 200 },
-                },
+                
+                    ProductInfos = new List<ProductInfo>()
+                    {
+                        new ProductInfo() { ProductCode = Guid.NewGuid(), ProductName = "Victorian Coffee Beans 2KG", Quantity = (100, Unit.Package) },
+                        new ProductInfo() { ProductCode = Guid.NewGuid(), ProductName = "A2 Full-Cream Milk 2L", Quantity = (50, Unit.Bottle) },
+                        new ProductInfo() { ProductCode = Guid.NewGuid(), ProductName = "Truss Tomato", Quantity = (100, Unit.Kilogram) },
+                        new ProductInfo() { ProductCode = Guid.NewGuid(), ProductName = "Iceberg Lettuce", Quantity = 200 },
+                    },
+
+                    LastUpdateTime = DateTimeOffset.Now,
+                }
             };
         }
     }

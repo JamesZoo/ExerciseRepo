@@ -15,7 +15,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventorySystem.View", "Inv
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WCF Libraries", "WCF Libraries", "{2EC783F6-21F5-41CD-BE98-C7FC64D973DD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventorySystem.Client", "InventorySystem.Client\InventorySystem.Client.csproj", "{D4AE553D-C08C-4D33-82BE-1D719B1FA6A1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "InventorySystem.Client", "InventorySystem.Client\InventorySystem.Client.csproj", "{D4AE553D-C08C-4D33-82BE-1D719B1FA6A1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InventorySystem.ViewModel", "InventorySystem.ViewModel\InventorySystem.ViewModel.csproj", "{9AC45455-AD67-4A1D-9AB4-F26D9D3D6E0C}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -47,6 +49,10 @@ Global
 		{D4AE553D-C08C-4D33-82BE-1D719B1FA6A1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D4AE553D-C08C-4D33-82BE-1D719B1FA6A1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D4AE553D-C08C-4D33-82BE-1D719B1FA6A1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9AC45455-AD67-4A1D-9AB4-F26D9D3D6E0C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9AC45455-AD67-4A1D-9AB4-F26D9D3D6E0C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9AC45455-AD67-4A1D-9AB4-F26D9D3D6E0C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9AC45455-AD67-4A1D-9AB4-F26D9D3D6E0C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
