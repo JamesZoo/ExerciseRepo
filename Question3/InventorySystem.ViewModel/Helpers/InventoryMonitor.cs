@@ -18,7 +18,6 @@ namespace InventorySystem.ViewModel
         Unknown,
         Disconnected,
         Connecting,
-        Connected,
         Syncing,
         OutOfSync,
         Synced,
@@ -79,64 +78,110 @@ namespace InventorySystem.ViewModel
             }
 
             // Business logic for synchronizing the inventory:
-            // Periodically check whether there is any inventory update.
-            // If update is detected, retreive the latest inventory.
+            //
+            // The first time will try retrieving data straight away.
+            //
+            // After that periodically check whether there is any inventory update.
+            // only retrieve data if the inventory is updated.
             try
             {
-                UpdateConnectionStatus(ConnectionStatus.Disconnected);
+                bool isInitialDataRetrieved = false;
+                TimeSpan reconnectDelay = TimeSpan.FromMilliseconds(5000);
+                TimeSpan checkUpdateDelay = TimeSpan.FromMilliseconds(2500);
                 while (!cancellationToken.IsCancellationRequested)
                 {
-                    cancellationToken.ThrowIfCancellationRequested();
-                    if (connectionStatus == ConnectionStatus.Disconnected)
+                    switch (connectionStatus)
                     {
-                        UpdateConnectionStatus(ConnectionStatus.Connecting);
-                    }
-
-                    var checkUpdateResult = await this.inventoryServiceClient.CheckUpdateAsync().ConfigureAwait(false);
-                    if (checkUpdateResult.ErrorCode == ErrorCode.Disconnected)
-                    {
-                        UpdateConnectionStatus(ConnectionStatus.Disconnected);
-                    }
-                    else
-                    {
-                        UpdateConnectionStatus(ConnectionStatus.Connected);
-                        if (checkUpdateResult.ErrorCode == ErrorCode.Success)
+                        case ConnectionStatus.Unknown:
                         {
-                            cancellationToken.ThrowIfCancellationRequested();
-
-                            // Synchronizing the inventory if the local timestamp is old.
-                            if (this.lastUpdateTime < checkUpdateResult.LastUpdateTime)
+                            UpdateConnectionStatus(ConnectionStatus.Connecting);
+                            break;
+                        }
+                        case ConnectionStatus.Disconnected:
+                        {
+                            await Task.Delay(reconnectDelay, cancellationToken).ConfigureAwait(false);
+                            UpdateConnectionStatus(ConnectionStatus.Connecting);
+                            break;
+                        }
+                        case ConnectionStatus.Connecting:
+                            if (isInitialDataRetrieved)
                             {
-                                UpdateConnectionStatus(ConnectionStatus.Syncing);
-                                var getInventoryInfoResult = await this.inventoryServiceClient.GetInventoryInfoAsync().ConfigureAwait(false);
-                                
-                                if (getInventoryInfoResult.ErrorCode == ErrorCode.Disconnected)
+                                var checkUpdateResult = await this.inventoryServiceClient.CheckUpdateAsync().ConfigureAwait(false);
+                                if (checkUpdateResult.ErrorCode == ErrorCode.Disconnected)
                                 {
                                     UpdateConnectionStatus(ConnectionStatus.Disconnected);
                                 }
                                 else
                                 {
-                                    UpdateConnectionStatus(ConnectionStatus.Connected);
-                                    if (getInventoryInfoResult.ErrorCode == ErrorCode.Success)
-                                    {
-                                        UpdateConnectionStatus(ConnectionStatus.Synced);
-                                        this.lastUpdateTime = getInventoryInfoResult.InventoryInfo.LastUpdateTime;
-                                        SendMessageOnDispatcher(new UpdateInventoryMessage(getInventoryInfoResult.InventoryInfo));
-                                    }
-                                    else
-                                    {
-                                        UpdateConnectionStatus(ConnectionStatus.OutOfSync);
-                                    }
+                                    UpdateConnectionStatus(this.lastUpdateTime < checkUpdateResult.LastUpdateTime
+                                        ? ConnectionStatus.Syncing
+                                        : ConnectionStatus.Synced);
                                 }
                             }
                             else
                             {
-                                UpdateConnectionStatus(ConnectionStatus.Synced);
+                                UpdateConnectionStatus(ConnectionStatus.Syncing);
                             }
-                        }
-                    }
 
-                    await Task.Delay(5000, cancellationToken).ConfigureAwait(false);
+                            break;
+
+                        case ConnectionStatus.Syncing:
+                        {
+                            var getInventoryInfoResult = await this.inventoryServiceClient.GetInventoryInfoAsync().ConfigureAwait(false);
+                            if (getInventoryInfoResult.ErrorCode == ErrorCode.Disconnected)
+                            {
+                                UpdateConnectionStatus(ConnectionStatus.Disconnected);
+                            }
+                            else
+                            {
+                                if (getInventoryInfoResult.ErrorCode == ErrorCode.Success)
+                                {
+                                    UpdateConnectionStatus(ConnectionStatus.Synced);
+                                    this.lastUpdateTime = getInventoryInfoResult.InventoryInfo.LastUpdateTime;
+                                    SendMessageOnDispatcher(new UpdateInventoryMessage(getInventoryInfoResult.InventoryInfo));
+                                    isInitialDataRetrieved = true;
+                                }
+                                else
+                                {
+                                    UpdateConnectionStatus(ConnectionStatus.OutOfSync);
+                                }
+                            }
+
+                            break;
+                        }
+                        case ConnectionStatus.OutOfSync:
+                        {
+                            await Task.Delay(checkUpdateDelay, cancellationToken).ConfigureAwait(false);
+                            UpdateConnectionStatus(ConnectionStatus.Syncing);
+                            break;
+                        }
+                        case ConnectionStatus.Synced:
+                        {
+                            await Task.Delay(checkUpdateDelay, cancellationToken).ConfigureAwait(false);
+
+                            var checkUpdateResult =
+                                await this.inventoryServiceClient.CheckUpdateAsync().ConfigureAwait(false);
+                            if (checkUpdateResult.ErrorCode == ErrorCode.Disconnected)
+                            {
+                                UpdateConnectionStatus(ConnectionStatus.Disconnected);
+                            }
+                            else
+                            {
+                                if (this.lastUpdateTime < checkUpdateResult.LastUpdateTime)
+                                {
+                                    UpdateConnectionStatus(ConnectionStatus.Syncing);
+                                }
+                                else
+                                {
+                                    UpdateConnectionStatus(ConnectionStatus.Synced);
+                                }
+                            }
+
+                            break;
+                        }
+                        default:
+                            throw new ArgumentOutOfRangeException();
+                    }
                 }
             }
             catch (Exception ex) when (ex is TaskCanceledException || ex is OperationCanceledException)
