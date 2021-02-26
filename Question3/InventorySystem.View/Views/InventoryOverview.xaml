@@ -9,6 +9,24 @@
              d:DesignHeight="450" d:DesignWidth="800">
   <UserControl.Resources>
     <CollectionViewSource x:Key="InventoryDataGridViewSource" Source="{Binding Products}"/>
+
+    <Style x:Key="InventoryDataGridStyle" TargetType="DataGrid" BasedOn="{StaticResource {x:Type DataGrid}}">
+      <Style.Resources>
+        <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
+          <Setter Property="BorderThickness" Value="0"/>
+          <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+          <Setter Property="IsTabStop" Value="False" />
+        </Style>
+      </Style.Resources>
+      
+      <Setter Property="IsReadOnly" Value="True"/>
+      <Setter Property="AutoGenerateColumns" Value="False"/>
+      <Setter Property="AlternationCount" Value="2"/>
+      <Setter Property="EnableRowVirtualization" Value="False"/>
+      <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+      <Setter Property="SelectionMode" Value="Extended"/>
+      <Setter Property="SelectionUnit" Value="FullRow"/>
+    </Style>
   </UserControl.Resources>
 
   <Grid IsEnabled="{Binding IsReady}" Margin="10">
@@ -48,13 +66,29 @@
 
     <DataGrid Grid.Row="1" 
               x:Name="InventoryDataGrid"
-              ItemsSource="{Binding Source={StaticResource InventoryDataGridViewSource}}"
-              IsReadOnly="True"
-              AutoGenerateColumns="False"
-              AlternationCount="2"
-              AlternatingRowBackground="LightBlue">
+              Style="{StaticResource InventoryDataGridStyle}"
+              ItemsSource="{Binding Source={StaticResource InventoryDataGridViewSource}}">
+
+      <DataGrid.Resources>
+        <Style TargetType="DataGridRow">
+          <Setter Property="IsSelected" Value="{Binding IsSelected}" />
+        </Style>
+      </DataGrid.Resources>
 
       <DataGrid.Columns>
+        <DataGridTemplateColumn MinWidth="20" >
+          <DataGridTemplateColumn.Header>
+            <CheckBox x:Name="SelectAllCheckBox" Checked="CheckBox_OnChecked" Unchecked="CheckBox_OnUnchecked" />
+          </DataGridTemplateColumn.Header>
+          <DataGridTemplateColumn.CellTemplate>
+            <DataTemplate>
+              <Grid>
+                <CheckBox VerticalAlignment="Center" HorizontalAlignment="Center" IsChecked="{Binding IsSelected}" IsHitTestVisible="False" />
+              </Grid>
+            </DataTemplate>
+          </DataGridTemplateColumn.CellTemplate>
+        </DataGridTemplateColumn>
+
         <DataGridTextColumn Header="Product Name" Width="2*" CanUserSort="True" Binding="{Binding ProductName}"/>
         <DataGridTextColumn Header="Quantity" Width="Auto" CanUserSort="True" Binding="{Binding Quantity}"/>
         <DataGridTextColumn Header="NewValue" Width="*" CanUserSort="True" Binding="{Binding DisplayUnit}"/>
