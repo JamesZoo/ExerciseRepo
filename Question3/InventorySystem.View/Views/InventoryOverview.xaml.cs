@@ -1,6 +1,7 @@
 ﻿namespace InventorySystem.View.Views
 {
     using System;
+    using System.Linq;
     using System.Windows;
     using System.Windows.Controls;
     using System.Windows.Data;
@@ -34,6 +35,16 @@
 
                     return productInfoVm.ProductName.IndexOf(searchBox.Text, StringComparison.OrdinalIgnoreCase) >= 0;
                 };
+        }
+
+        private void CheckBox_OnChecked(object sender, RoutedEventArgs e)
+        {
+            this.InventoryDataGrid.SelectAll();
+        }
+
+        private void CheckBox_OnUnchecked(object sender, RoutedEventArgs e)
+        {
+            this.InventoryDataGrid.UnselectAll();
         }
     }
 }

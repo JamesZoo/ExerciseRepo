@@ -5,14 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:InventorySystem"
         xmlns:views="clr-namespace:InventorySystem.View.Views;assembly=InventorySystem.View"
-        Title="MainWindow" Height="700" Width="1000" MinHeight="700" MinWidth="1000"
+        Title="MainWindow" Height="800" Width="1300" MinHeight="800" MinWidth="1300"
         Loaded="MainWindow_OnLoaded" Closed="MainWindow_OnClosed">
   <Grid Margin="10">
     <Grid.RowDefinitions>
       <RowDefinition Height="*"/>
       <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
-    <TwoPaneView PanePriority="Pane1" Pane1Length="2*" Pane2Length="*">
+    <TwoPaneView PanePriority="Pane1" Pane1Length="3*" Pane2Length="2*">
       <TwoPaneView.Pane1>
         <views:InventoryOverview x:Name="InventoryOverview" DataContext="{Binding InventoryOverviewVm}" />
       </TwoPaneView.Pane1>

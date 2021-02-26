@@ -12,6 +12,7 @@
         private string productName;
         private uint quantity;
         private string displayUnit;
+        private bool isSelected;
 
         public Guid ProductCode { get; set; }
 
@@ -33,6 +34,12 @@
             set => this.Set(ref this.displayUnit, value);
         }
 
+        public bool IsSelected
+        {
+            get => this.isSelected;
+            set => this.Set(ref this.isSelected, value);
+        }
+
         public static ProductInfoVM CreateFromModel(ProductInfo model)
         {
             return new ProductInfoVM()
@@ -40,9 +47,7 @@
                 ProductCode = model.ProductCode,
                 ProductName = model.ProductName,
                 Quantity = model.Quantity.Numeric,
-                DisplayUnit = model.Quantity.Numeric > 1
-                    ? ToPluralUnit(model.Quantity.Unit)
-                    : ToSingularUnit(model.Quantity.Unit),
+                DisplayUnit = ToPluralDisplay(model.Quantity.Unit),
             };
         }
 
@@ -55,9 +60,7 @@
 
             ProductName = model.ProductName;
             Quantity = model.Quantity.Numeric;
-            DisplayUnit = model.Quantity.Numeric > 1
-                ? ToPluralUnit(model.Quantity.Unit)
-                : ToSingularUnit(model.Quantity.Unit);
+            DisplayUnit = ToPluralDisplay(model.Quantity.Unit);
         }
 
         public override string ToString()
@@ -65,23 +68,18 @@
             return $"{this.ProductName}: {this.Quantity} {this.DisplayUnit}";
         }
 
-        private static string ToSingularUnit(Unit unit)
-        {
-            return unit.ToString();
-        }
-
-        private static string ToPluralUnit(Unit unit)
+        private static string ToPluralDisplay(Unit unit)
         {
             switch (unit)
             {
                 case Unit.Unit:
-                    return "Units";
+                    return "Unit(s)";
                 case Unit.Kilogram:
-                    return "Kilograms";
+                    return "Kilogram(s)";
                 case Unit.Bottle:
-                    return "Bottles";
+                    return "Bottle(s)";
                 case Unit.Package:
-                    return "Packages";
+                    return "Package(s)";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(unit), unit, null);
             }
