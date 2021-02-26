@@ -65,11 +65,11 @@
 
             // First remove products that no longer exist.
             var latestProductCodes = productInfos.Select(info => info.ProductCode).ToList();
-            var productsToRemove = productsLookup.Keys.Except(latestProductCodes).ToList();
+            var productsToRemove = this.productsLookup.Keys.Except(latestProductCodes).ToList();
             foreach (var productCode in productsToRemove)
             {
-                var productToRemove = productsLookup[productCode];
-                productsLookup.Remove(productCode);
+                var productToRemove = this.productsLookup[productCode];
+                this.productsLookup.Remove(productCode);
                 this.Products.Remove(productToRemove);
             }
 

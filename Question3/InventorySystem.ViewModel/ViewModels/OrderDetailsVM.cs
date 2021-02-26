@@ -4,7 +4,12 @@
     using System.Collections;
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
+    using System.Diagnostics;
+    using System.Linq;
+    using System.Threading.Tasks;
     using System.Windows.Input;
+    using Client;
+    using Contract;
     using GalaSoft.MvvmLight;
     using GalaSoft.MvvmLight.CommandWpf;
 
@@ -13,6 +18,7 @@
         Pending,
         Processing,
         Completed,
+        Rejected,
     }
 
     /// <summary>
@@ -34,6 +40,7 @@
             this.ProcessOrderCommand = new RelayCommand(this.ProcessOrder, this.CanProcessOrder);
 
             this.MessengerInstance.Register<DeleteFromParentMessage<ProductOrderDetailsVM>>(this, this.DeleteProductOrder);
+            this.MessengerInstance.Register<UpdateInventoryMessage>(this, OnUpdateInventory);
         }
 
         public DateTimeOffset CreationTime { get; } = DateTimeOffset.Now;
@@ -81,6 +88,11 @@
                 }
                 else
                 {
+                    if (product.Quantity == 0)
+                    {
+                        continue;
+                    }
+
                     var newProductOrder = new ProductOrderDetailsVM(product.ProductCode, this)
                     {
                         ProductName = product.ProductName,
@@ -101,26 +113,92 @@
 
         private bool CanRemoveOrder()
         {
-            // TODO: do not let remove when processing the order.
-            return true;
+            return this.OrderStatus != OrderStatus.Processing;
         }
 
-        private void ProcessOrder()
+        private async void ProcessOrder()
         {
+            // Run asynchrnously and then marshal back to UI thread after await by using ConfigureAwait(true);
+
+            this.OrderStatus = OrderStatus.Processing;
+
+            var orderTransaction = new OrderTransaction()
+            {
+                ProductOrders = this.ProductOrders.Select(vm => new ProductOrder() { ProductCode = vm.ProductCode, OrderQuantity = vm.OrderQuantity }).ToList(),
+            };
+
+            using (var inventoryServiceClient = InventoryServiceClientFactory.Instance.CreateAutoRecoveryClient(HardCodedServerInfo.InventoryServiceEndpointUri))
+            {
+                try
+                {
+                    var result = await inventoryServiceClient.ProcessOrderAsync(orderTransaction).ConfigureAwait(true);
+                    if (result.ErrorCode == ErrorCode.Disconnected)
+                    {
+                        this.OrderStatus = OrderStatus.Pending;
+                    }
+                    else if (result.ErrorCode == ErrorCode.Success)
+                    {
+                        this.OrderStatus = OrderStatus.Completed;
+                        this.ProcessedTime = result.ProcessedTime;
+                    }
+                    else
+                    {
+                        this.OrderStatus = OrderStatus.Rejected;
+                    }
+                }
+                catch (Exception ex)
+                {
+                    this.OrderStatus = OrderStatus.Rejected;
+                    Trace.WriteLine(ex);
+                    throw;
+                }
+            }
         }
 
         private bool CanProcessOrder()
         {
-            // TODO:
-            // While processing, do not process again.
-            // Once order completed, do not process.
-            return true;
+            return this.OrderStatus == OrderStatus.Pending && this.ProductOrders.Count > 0 && this.ProductOrders.All(productOrder => productOrder.OrderQuantity > 0);
         }
 
         private void DeleteProductOrder(DeleteFromParentMessage<ProductOrderDetailsVM> message)
         {
             this.ProductOrders.Remove(message.ObjectToDelete);
             message.ObjectToDelete.Dispose();
+        }
+
+        private void OnUpdateInventory(UpdateInventoryMessage message)
+        {
+            if (this.OrderStatus != OrderStatus.Pending)
+            {
+                return;
+            }
+
+            var productInfos = message.Content.ProductInfos;
+
+            // First remove products that no longer exist.
+            var latestProductCodes = productInfos.Select(info => info.ProductCode).ToList();
+            var productsToRemove = productOrderLookup.Keys.Except(latestProductCodes).ToList();
+            foreach (var productCode in productsToRemove)
+            {
+                var productToRemove = this.productOrderLookup[productCode];
+                this.productOrderLookup.Remove(productCode);
+                this.ProductOrders.Remove(productToRemove);
+                productToRemove.Dispose();
+            }
+
+            // Then update existing products or add as new product.
+            foreach (var productInfo in productInfos)
+            {
+                if (this.productOrderLookup.TryGetValue(productInfo.ProductCode, out var productOrder))
+                {
+                    productOrder.ProductName = productInfo.ProductName;
+                    productOrder.MaxQuantity = productInfo.Quantity.Numeric;
+                    if (productOrder.OrderQuantity > productInfo.Quantity.Numeric)
+                    {
+                        productOrder.OrderQuantity = productInfo.Quantity.Numeric;
+                    }
+                }
+            }
         }
     }
 }

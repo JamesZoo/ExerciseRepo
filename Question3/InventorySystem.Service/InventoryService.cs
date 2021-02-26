@@ -111,7 +111,7 @@
 
                 this.lastUpdateTime = DateTimeOffset.Now;
 
-                return new ProcessOrderResult() {ErrorCode = ErrorCode.Success};
+                return new ProcessOrderResult() { ErrorCode = ErrorCode.Success, ProcessedTime = this.lastUpdateTime };
             }
         }
     }

@@ -7,5 +7,7 @@
     [DataContract]
     public class ProcessOrderResult : OperationResult
     {
+        [DataMember]
+        public DateTimeOffset ProcessedTime { get; set; }
     }
 }

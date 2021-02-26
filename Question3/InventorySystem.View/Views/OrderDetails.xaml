@@ -6,6 +6,7 @@
              xmlns:local="clr-namespace:InventorySystem.View.Views"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              xmlns:numericUpDownLib="clr-namespace:NumericUpDownLib;assembly=NumericUpDownLib"
+             xmlns:viewModel="clr-namespace:InventorySystem.ViewModel;assembly=InventorySystem.ViewModel"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
   <UserControl.Resources>
@@ -14,6 +15,42 @@
         <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
         <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/materialdesigntheme.textbox.xaml" />
       </ResourceDictionary.MergedDictionaries>
+
+      <Style x:Key="TitleTextStyle" TargetType="TextBlock">
+        <Setter Property="FontSize" Value="18"></Setter>
+      </Style>
+
+      <Style x:Key="OrderStatusTextStyle" TargetType="TextBlock" BasedOn="{StaticResource TitleTextStyle}">
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding OrderStatus}" Value="{x:Static viewModel:OrderStatus.Processing}">
+            <Setter Property="Foreground" Value="DarkGray"/>
+          </DataTrigger>
+
+          <DataTrigger Binding="{Binding OrderStatus}" Value="{x:Static viewModel:OrderStatus.Completed}">
+            <Setter Property="Foreground" Value="ForestGreen"/>
+          </DataTrigger>
+
+          <DataTrigger Binding="{Binding OrderStatus}" Value="{x:Static viewModel:OrderStatus.Rejected}">
+            <Setter Property="Foreground" Value="DarkRed"/>
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
+
+      <Style x:Key="OrdersViewStyle" TargetType="ItemsControl">
+        <Style.Triggers>
+          <DataTrigger Binding="{Binding OrderStatus}" Value="{x:Static viewModel:OrderStatus.Processing}">
+            <Setter Property="IsEnabled" Value="False"/>
+          </DataTrigger>
+
+          <DataTrigger Binding="{Binding OrderStatus}" Value="{x:Static viewModel:OrderStatus.Completed}">
+            <Setter Property="IsEnabled" Value="False"/>
+          </DataTrigger>
+
+          <DataTrigger Binding="{Binding OrderStatus}" Value="{x:Static viewModel:OrderStatus.Rejected}">
+            <Setter Property="IsEnabled" Value="False"/>
+          </DataTrigger>
+        </Style.Triggers>
+      </Style>
     </ResourceDictionary>
   </UserControl.Resources>
 
@@ -25,7 +62,8 @@
         <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
 
-      <ItemsControl Grid.Row="1" x:Name="ProductsListView" ItemsSource="{Binding ProductOrders}" Margin="10" HorizontalContentAlignment="Stretch">
+      <!-- Product orders items control -->
+      <ItemsControl Grid.Row="1" ItemsSource="{Binding ProductOrders}" Style="{StaticResource OrdersViewStyle}" Margin="10" HorizontalContentAlignment="Stretch">
         <ItemsControl.ItemTemplate>
           <DataTemplate>
             <Grid Margin="5">
@@ -39,9 +77,11 @@
 
               <TextBlock Grid.Column="0" Text="{Binding ProductName}" Margin="0,0,10,0" VerticalAlignment="Center"/>
               <TextBlock Grid.Column="1" Text="Order Quantity:" Margin="0,0,5,0" VerticalAlignment="Center"/>
-              <numericUpDownLib:UIntegerUpDown Grid.Column="2" Value="{Binding OrderQuantity}" MinValue="0" MaxValue="{Binding MaxQuantity}">
+              
+              <!-- Quantity Input -->
+              <numericUpDownLib:UIntegerUpDown x:Name="OrderQuantityInput" Grid.Column="2" Value="{Binding OrderQuantity, Mode=TwoWay}" MinValue="0" MaxValue="{Binding MaxQuantity}">
                 <numericUpDownLib:UIntegerUpDown.Resources>
-                  <Style TargetType="Button" BasedOn="{x:Null}"/>
+                  <Style TargetType="Button" BasedOn="{x:Null}" />
                 </numericUpDownLib:UIntegerUpDown.Resources>
               </numericUpDownLib:UIntegerUpDown>
               
@@ -49,6 +89,7 @@
                 <TextBlock Text="{Binding MaxQuantity}" Margin="0,0,5,0" VerticalAlignment="Center"/>
                 <TextBlock Text="In Total" VerticalAlignment="Center"/>
               </StackPanel>
+              
               <Button Grid.Column="4"
                       Content="Remove"
                       Command="{Binding RemoveFromOrderCommand}"
@@ -72,15 +113,9 @@
 
         <!-- "Order - Pending" section -->
         <StackPanel Grid.Column="0" x:Name="TitlePanel" Orientation="Horizontal">
-          <StackPanel.Resources>
-            <Style TargetType="TextBlock">
-              <Setter Property="FontSize" Value="18"></Setter>
-            </Style>
-          </StackPanel.Resources>
-
-          <TextBlock Text="Order"/>
-          <TextBlock Text="-" Margin="5,0"/>
-          <TextBlock Text="{Binding OrderStatus}"/>
+          <TextBlock Text="Order" Style="{StaticResource TitleTextStyle}"/>
+          <TextBlock Text="-" Margin="5,0" Style="{StaticResource TitleTextStyle}" />
+          <TextBlock Text="{Binding OrderStatus}" Style="{StaticResource OrderStatusTextStyle}"/>
         </StackPanel>
 
         <!-- Created at: <time>   Processed at: <time>-->

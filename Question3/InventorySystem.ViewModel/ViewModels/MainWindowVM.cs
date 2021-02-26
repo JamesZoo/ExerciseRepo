@@ -9,9 +9,11 @@
     public sealed class MainWindowVM : ViewModelBase, IDisposable
     {
         private string connectionStatus = "Unknown";
+        private DateTimeOffset lastUpdateTime = DateTimeOffset.MinValue;
 
         public MainWindowVM()
         {
+            this.MessengerInstance.Register<UpdateInventoryMessage>(this, OnUpdateInventory);
             this.MessengerInstance.Register<UpdateConnectionStatusMessage>(this, OnReceiveUpdateConnectionStatusMessage);
         }
 
@@ -29,6 +31,12 @@
         {
             get => this.connectionStatus;
             set => this.Set(ref this.connectionStatus, value);
+        }
+
+        public DateTimeOffset LastUpdateTime
+        {
+            get => this.lastUpdateTime;
+            set => this.Set(ref this.lastUpdateTime, value);
         }
 
         public void Dispose()
@@ -63,6 +71,11 @@
                 default:
                     throw new ArgumentOutOfRangeException(nameof(message.Content), message.Content, "Undefined connection status detected.");
             }
+        }
+
+        private void OnUpdateInventory(UpdateInventoryMessage message)
+        {
+            this.LastUpdateTime = message.Content.LastUpdateTime;
         }
     }
 }
