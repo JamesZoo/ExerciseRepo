@@ -9,10 +9,10 @@
 
   <Grid>
     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Hidden">
-      <ListView x:Name="OrdersListView" ItemsSource="Orders">
+      <ListView x:Name="OrdersListView" ItemsSource="{Binding Orders}" HorizontalContentAlignment="Stretch">
         <ListView.ItemTemplate>
           <DataTemplate>
-            <local:OrderDetails />
+            <local:OrderDetails DataContext="{Binding}" />
           </DataTemplate>
         </ListView.ItemTemplate>
       </ListView>
