@@ -5,28 +5,48 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:InventorySystem.View.Views"
              xmlns:searchControl="clr-namespace:LiveSearchTextBoxControl;assembly=LiveSearchTextBoxControl"
+             xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
   <UserControl.Resources>
-    <CollectionViewSource x:Key="InventoryDataGridViewSource" Source="{Binding Products}"/>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <!-- This is the current way to setup your app's initial theme -->
+        <materialDesign:BundledTheme BaseTheme="Inherit" PrimaryColor="Indigo" SecondaryColor="Lime"
+                                       ColorAdjustment="{materialDesign:ColorAdjustment}" />
 
-    <Style x:Key="InventoryDataGridStyle" TargetType="DataGrid" BasedOn="{StaticResource {x:Type DataGrid}}">
-      <Style.Resources>
-        <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
-          <Setter Property="BorderThickness" Value="0"/>
-          <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-          <Setter Property="IsTabStop" Value="False" />
-        </Style>
-      </Style.Resources>
+        <!-- If you would prefer to use your own colors there is an option for that as well -->
+        <!--<materialDesign:CustomColorTheme BaseTheme="Light" PrimaryColor="Aqua" SecondaryColor="DarkGreen" />-->
+
+        <!-- You can also use the built in theme dictionaries as well
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Light.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Primary/MaterialDesignColor.DeepPurple.xaml" />
+                <ResourceDictionary Source="pack://application:,,,/MaterialDesignColors;component/Themes/Recommended/Accent/MaterialDesignColor.Lime.xaml" />
+                -->
+
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Defaults.xaml" />
+      </ResourceDictionary.MergedDictionaries>
       
-      <Setter Property="IsReadOnly" Value="True"/>
-      <Setter Property="AutoGenerateColumns" Value="False"/>
-      <Setter Property="AlternationCount" Value="2"/>
-      <Setter Property="EnableRowVirtualization" Value="False"/>
-      <Setter Property="GridLinesVisibility" Value="Horizontal"/>
-      <Setter Property="SelectionMode" Value="Extended"/>
-      <Setter Property="SelectionUnit" Value="FullRow"/>
-    </Style>
+      <CollectionViewSource x:Key="InventoryDataGridViewSource" Source="{Binding Products}"/>
+
+      <Style x:Key="InventoryDataGridStyle" TargetType="DataGrid" BasedOn="{StaticResource {x:Type DataGrid}}">
+        <Style.Resources>
+          <Style TargetType="{x:Type DataGridCell}" BasedOn="{StaticResource {x:Type DataGridCell}}">
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="IsTabStop" Value="False" />
+          </Style>
+        </Style.Resources>
+      
+        <Setter Property="IsReadOnly" Value="True"/>
+        <Setter Property="AutoGenerateColumns" Value="False"/>
+        <Setter Property="AlternationCount" Value="2"/>
+        <Setter Property="EnableRowVirtualization" Value="False"/>
+        <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+        <Setter Property="SelectionMode" Value="Extended"/>
+        <Setter Property="SelectionUnit" Value="FullRow"/>
+      </Style>
+    </ResourceDictionary>
   </UserControl.Resources>
 
   <Grid IsEnabled="{Binding IsReady}" Margin="10">
