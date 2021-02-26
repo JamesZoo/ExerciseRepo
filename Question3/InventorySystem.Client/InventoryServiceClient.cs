@@ -3,6 +3,7 @@
     using System;
     using System.ServiceModel;
     using System.ServiceModel.Channels;
+    using System.Threading.Tasks;
     using InventorySystem.Contract;
 
     public interface IInventoryServiceClient : IInventoryService, IDisposable
@@ -18,14 +19,19 @@
         {
         }
         
-        public System.Threading.Tasks.Task<CheckUpdateResult> CheckUpdateAsync()
+        public Task<CheckUpdateResult> CheckUpdateAsync()
         {
             return base.Channel.CheckUpdateAsync();
         }
         
-        public System.Threading.Tasks.Task<GetInventoryInfoResult> GetInventoryInfoAsync()
+        public Task<GetInventoryInfoResult> GetInventoryInfoAsync()
         {
             return base.Channel.GetInventoryInfoAsync();
+        }
+
+        public Task<ProcessOrderResult> ProcessOrderAsync(OrderTransaction orderTransaction)
+        {
+            return base.Channel.ProcessOrderAsync(orderTransaction);
         }
     }
 }

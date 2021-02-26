@@ -20,5 +20,12 @@
         /// <returns>The asynchronous task of this operation</returns>
         [OperationContract]
         Task<GetInventoryInfoResult> GetInventoryInfoAsync();
+
+        /// <summary>
+        /// Process order.
+        /// </summary>
+        /// <returns>The asynchronous task of this operation</returns>
+        [OperationContract]
+        Task<ProcessOrderResult> ProcessOrderAsync(OrderTransaction orderTransaction);
     }
 }

@@ -84,5 +84,35 @@
                 };
             }
         }
+
+        public async Task<ProcessOrderResult> ProcessOrderAsync(OrderTransaction orderTransaction)
+        {
+            await Task.Delay(1500).ConfigureAwait(false);
+
+            if (orderTransaction == null || orderTransaction.ProductOrders == null)
+            {
+                return new ProcessOrderResult() { ErrorCode = ErrorCode.InvalidArgs };
+            }
+
+            lock (this.dataLock)
+            {
+                foreach (var productOrder in orderTransaction.ProductOrders)
+                {
+                    if (!this.products.TryGetValue(productOrder.ProductCode, out var productInfo) || productOrder.OrderQuantity > productInfo.Quantity.Numeric)
+                    {
+                        return new ProcessOrderResult() { ErrorCode = ErrorCode.InsufficientQuantity };
+                    }
+                }
+
+                foreach (var productOrder in orderTransaction.ProductOrders)
+                {
+                    this.products[productOrder.ProductCode].Quantity.Numeric -= productOrder.OrderQuantity;
+                }
+
+                this.lastUpdateTime = DateTimeOffset.Now;
+
+                return new ProcessOrderResult() {ErrorCode = ErrorCode.Success};
+            }
+        }
     }
 }
