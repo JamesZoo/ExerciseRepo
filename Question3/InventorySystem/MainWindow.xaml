@@ -18,7 +18,7 @@
       </TwoPaneView.Pane1>
       
       <TwoPaneView.Pane2>
-        <TextBlock Text="Orders Overview (Placeholder)" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+        <views:OrdersOverview x:Name="OrdersOverview" DataContext="{Binding OrdersOverviewVm}" />
       </TwoPaneView.Pane2>
     </TwoPaneView>
 

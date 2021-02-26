@@ -41,6 +41,7 @@
         <ColumnDefinition Width ="Auto"/>
         <ColumnDefinition Width="*"/>
         <ColumnDefinition Width ="Auto"/>
+        <ColumnDefinition Width ="Auto"/>
       </Grid.ColumnDefinitions>
 
       <TextBlock Grid.Column="0" Margin="0,0,0,10" Text="Inventory Overview" FontSize="24" VerticalAlignment="Top"/>
@@ -48,20 +49,30 @@
       <StackPanel x:Name="SearchPanel" Grid.Column="1" Orientation="Horizontal" Margin="0,0,30,0" VerticalAlignment="Bottom" HorizontalAlignment="Right">
         <TextBlock Text="Search:" FontSize="14" VerticalAlignment="Center"/>
         <searchControl:LiveSearchTextBox Margin="10,0,0,0"
-                                         Width="200"
+                                         Width="150"
                                          VerticalAlignment="Center"
-                                         HintText="Enter product name here..."
+                                         HintText="Search Product"
                                          FontSize="14"
                                          Filter="LiveSearchTextBox_OnFilter"/>
       </StackPanel>
-      
+
       <Button Grid.Column="2"
-              Content="New Order"
+              Content="Order(New)"
               Width="100"
               Height="30"
               VerticalAlignment="Bottom"
               VerticalContentAlignment="Center"
-              FontSize="14"/>
+              FontSize="14"
+              Command="{Binding NewOrderCommand}"/>
+
+      <Button Grid.Column="3"
+              Content="Order(Existing)"
+              Width="100"
+              Height="30"
+              VerticalAlignment="Bottom"
+              VerticalContentAlignment="Center"
+              FontSize="14"
+              Command="{Binding UpdateOrderCommand}"/>
     </Grid>
 
     <DataGrid Grid.Row="1" 
