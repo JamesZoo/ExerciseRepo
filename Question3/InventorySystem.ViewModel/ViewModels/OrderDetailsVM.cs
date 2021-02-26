@@ -68,7 +68,30 @@
 
         public void AddProducts(IEnumerable<ProductInfoVM> productInfos)
         {
+            foreach (var product in productInfos)
+            {
+                if (this.productOrderLookup.TryGetValue(product.ProductCode, out var productOrder))
+                {
+                    productOrder.ProductName = product.ProductName;
+                    productOrder.MaxQuantity = product.Quantity;
+                    if (productOrder.OrderQuantity > product.Quantity)
+                    {
+                        productOrder.OrderQuantity = product.Quantity;
+                    }
+                }
+                else
+                {
+                    var newProductOrder = new ProductOrderDetailsVM(product.ProductCode, this)
+                    {
+                        ProductName = product.ProductName,
+                        OrderQuantity = 1,
+                        MaxQuantity = product.Quantity,
+                    };
 
+                    this.productOrderLookup[product.ProductCode] = newProductOrder;
+                    this.ProductOrders.Add(newProductOrder);
+                }
+            }
         }
 
         private void RemoveOrder()
