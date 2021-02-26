@@ -4,7 +4,9 @@
     using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Linq;
+    using System.Windows.Input;
     using GalaSoft.MvvmLight;
+    using GalaSoft.MvvmLight.CommandWpf;
 
     /// <summary>
     /// VM for Inventory Overview.
@@ -12,28 +14,49 @@
     public sealed class InventoryOverviewVM : ViewModelBase, IDisposable
     {
         private readonly Dictionary<Guid, ProductInfoVM> productsLookup = new Dictionary<Guid, ProductInfoVM>();
-        private readonly ObservableCollection<ProductInfoVM> products = new ObservableCollection<ProductInfoVM>();
-        private bool _isReady = true;
-
+        
+        private bool isReady = true;
         private bool hasSyncedBefore = false;
 
         public InventoryOverviewVM()
         {
+            this.NewOrderCommand = new RelayCommand(this.CreateNewOrder, this.HasAnySelectedProducts);
+            this.UpdateOrderCommand = new RelayCommand(this.UpdateOrder, this.HasAnySelectedProducts);
+
             this.MessengerInstance.Register<UpdateInventoryMessage>(this, OnUpdateInventory);
             this.MessengerInstance.Register<UpdateConnectionStatusMessage>(this, OnConnectionStatusChanged);
         }
 
-        public ObservableCollection<ProductInfoVM> Products => this.products;
+        public ObservableCollection<ProductInfoVM> Products { get; } = new ObservableCollection<ProductInfoVM>();
+
+        public ICommand NewOrderCommand { get; }
+
+        public ICommand UpdateOrderCommand { get; }
 
         public bool IsReady
         {
-            get => this._isReady;
-            set => this.Set(ref _isReady, value);
+            get => this.isReady;
+            set => this.Set(ref isReady, value);
         }
 
         public void Dispose()
         {
-            this.MessengerInstance.Unregister(this);
+            this.Cleanup();
+        }
+
+        private void CreateNewOrder()
+        {
+            this.MessengerInstance.Send(new AddToNewOrderMessage(this.Products.Where(product => product.IsSelected).ToList()));
+        }
+
+        private void UpdateOrder()
+        {
+            this.MessengerInstance.Send(new AddToSelectedOrderMessage(this.Products.Where(product => product.IsSelected).ToList()));
+        }
+
+        private bool HasAnySelectedProducts()
+        {
+            return this.Products.Any(product => product.IsSelected);
         }
 
         private void OnUpdateInventory(UpdateInventoryMessage message)
@@ -47,7 +70,7 @@
             {
                 var productToRemove = productsLookup[productCode];
                 productsLookup.Remove(productCode);
-                this.products.Remove(productToRemove);
+                this.Products.Remove(productToRemove);
             }
 
             // Then update existing products or add as new product.
@@ -61,7 +84,7 @@
                 {
                     var newProductInfoVm = ProductInfoVM.CreateFromModel(productInfo);
                     this.productsLookup[productInfo.ProductCode] = newProductInfoVm;
-                    this.products.Add(newProductInfoVm);
+                    this.Products.Add(newProductInfoVm);
                 }
             }
         }

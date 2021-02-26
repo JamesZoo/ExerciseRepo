@@ -20,6 +20,11 @@
         /// </summary>
         public InventoryOverviewVM InventoryOverviewVm { get; } = new InventoryOverviewVM();
 
+        /// <summary>
+        /// Gets OrdersOverview view model.
+        /// </summary>
+        public OrdersOverviewVM OrdersOverviewVm { get; } = new OrdersOverviewVM();
+
         public string ConnectionStatus
         {
             get => this.connectionStatus;
@@ -28,7 +33,9 @@
 
         public void Dispose()
         {
-            this.MessengerInstance.Unregister(this);
+            this.Cleanup();
+            this.InventoryOverviewVm.Dispose();
+            this.OrdersOverviewVm.Dispose();
         }
 
         private void OnReceiveUpdateConnectionStatusMessage(UpdateConnectionStatusMessage message)
