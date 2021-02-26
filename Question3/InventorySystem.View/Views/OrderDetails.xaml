@@ -2,95 +2,119 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
-             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:local="clr-namespace:InventorySystem.View.Views"
              xmlns:system="clr-namespace:System;assembly=mscorlib"
              mc:Ignorable="d" 
              d:DesignHeight="450" d:DesignWidth="800">
+  <UserControl.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/MaterialDesignTheme.Button.xaml" />
+        <ResourceDictionary Source="pack://application:,,,/MaterialDesignThemes.Wpf;component/Themes/materialdesigntheme.textbox.xaml" />
+      </ResourceDictionary.MergedDictionaries>
+    </ResourceDictionary>
+  </UserControl.Resources>
 
-  <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition Height="*"/>
-      <RowDefinition Height="Auto"/>
-    </Grid.RowDefinitions>
+  <Border x:Name="ItemBorder" BorderThickness="2" Margin="5" BorderBrush="Gray" MinHeight="350">
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
 
-    <ItemsControl Grid.Row="1" x:Name="ProductsListView" ItemsSource="{Binding ProductOrders}" Margin="10" HorizontalContentAlignment="Stretch">
-      <ItemsControl.ItemTemplate>
-        <DataTemplate>
-          <StackPanel Orientation="Horizontal" Margin="0, 5">
-            <TextBlock Text="{Binding ProductName}" Margin="0,0,10,0"/>
-            <TextBlock Text="Order Quantity:" Margin="0,0,5,0"/>
-            <!-- TODO: Integer Box -->
-            <TextBox Text="PlaceHolder"></TextBox>
-            <Button Content="Remove" Command="{Binding RemoveFromOrderCommand}" IsHitTestVisible="True"/>
-          </StackPanel>
-        </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
+      <ItemsControl Grid.Row="1" x:Name="ProductsListView" ItemsSource="{Binding ProductOrders}" Margin="10" HorizontalContentAlignment="Stretch">
+        <ItemsControl.ItemTemplate>
+          <DataTemplate>
+            <Grid Margin="5">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
 
-    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
-      <Button Content="Process Order" Command="{Binding ProcessOrderCommand}" IsHitTestVisible="True" Margin="0,0,5,0"/>
-      <Button Content="Remove Order" Command="{Binding RemoveOrderCommand}" IsHitTestVisible="True"/>
-    </StackPanel>
+              <TextBlock Grid.Column="0" Text="{Binding ProductName}" Margin="0,0,10,0" VerticalAlignment="Center"/>
+              <TextBlock Grid.Column="1" Text="Order Quantity:" Margin="0,0,5,0" VerticalAlignment="Center"/>
+              <TextBox Grid.Column="2" Text="PlaceHolder" Style="{StaticResource MaterialDesignFilledTextBox}" VerticalAlignment="Center"/>
+              <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center" Margin="5,0">
+                <TextBlock Text="{Binding MaxQuantity}" Margin="0,0,5,0" VerticalAlignment="Center"/>
+                <TextBlock Text="In Total" VerticalAlignment="Center"/>
+              </StackPanel>
+              <Button Grid.Column="4"
+                      Content="X"
+                      Style="{StaticResource MaterialDesignIconForegroundButton}"
+                      Command="{Binding RemoveFromOrderCommand}"
+                      VerticalAlignment="Center"/>
+            </Grid>
+          </DataTemplate>
+        </ItemsControl.ItemTemplate>
+      </ItemsControl>
 
-    <!-- Title bar, including the title and creation / completion time -->
-    <Grid Grid.Row="0" x:Name="TitleRow" Margin="10">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="*"/>
-      </Grid.ColumnDefinitions>
-
-      <!-- "Order - Pending" section -->
-      <StackPanel Grid.Column="0" x:Name="TitlePanel" Orientation="Horizontal">
-        <StackPanel.Resources>
-          <Style TargetType="TextBlock">
-            <Setter Property="FontSize" Value="18"></Setter>
-          </Style>
-        </StackPanel.Resources>
-
-        <TextBlock Text="Order"/>
-        <TextBlock Text="-" Margin="5,0"/>
-        <TextBlock Text="{Binding OrderStatus}"/>
+      <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="10">
+        <Button Content="Process Order" Command="{Binding ProcessOrderCommand}" Margin="0,0,5,0"/>
+        <Button Content="Remove Order" Command="{Binding RemoveOrderCommand}"/>
       </StackPanel>
 
-      <!-- Created at: <time>   Processed at: <time>-->
-      <Grid Grid.Column="1" x:Name="TimestampsPanel" VerticalAlignment="Center" HorizontalAlignment="Center">
-        <Grid.Resources>
-          <Style TargetType="TextBlock">
-            <Setter Property="FontSize" Value="12"></Setter>
-          </Style>
-        </Grid.Resources>
+      <!-- Title bar, including the title and creation / completion time -->
+      <Grid Grid.Row="0" x:Name="TitleRow" Margin="10">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
 
-        <Grid.RowDefinitions>
-          <RowDefinition Height="Auto"/>
-          <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-
-        <!-- Created at: <time> -->
-        <StackPanel Grid.Row="0" Orientation="Horizontal">
-          <TextBlock Text="Create at:" Margin="0,0,5,0"/>
-          <TextBlock Text="{Binding CreationTime, StringFormat=G}"/>
-        </StackPanel>
-
-        <!-- Processed at: <time> -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal">
-          <StackPanel.Style>
-            <Style TargetType="StackPanel">
-              <Style.Triggers>
-                <DataTrigger Binding="{Binding ProcessedTime}" Value="{x:Static system:DateTimeOffset.MinValue}">
-                  <Setter Property="Visibility" Value="Collapsed"/>
-                </DataTrigger>
-              </Style.Triggers>
+        <!-- "Order - Pending" section -->
+        <StackPanel Grid.Column="0" x:Name="TitlePanel" Orientation="Horizontal">
+          <StackPanel.Resources>
+            <Style TargetType="TextBlock">
+              <Setter Property="FontSize" Value="18"></Setter>
             </Style>
-          </StackPanel.Style>
+          </StackPanel.Resources>
 
-          <TextBlock Text="Processed at:" Margin="0,0,5,0"/>
-          <TextBlock Text="{Binding ProcessedTime, StringFormat=G}" />
+          <TextBlock Text="Order"/>
+          <TextBlock Text="-" Margin="5,0"/>
+          <TextBlock Text="{Binding OrderStatus}"/>
         </StackPanel>
+
+        <!-- Created at: <time>   Processed at: <time>-->
+        <Grid Grid.Column="1" x:Name="TimestampsPanel" VerticalAlignment="Center" HorizontalAlignment="Center">
+          <Grid.Resources>
+            <Style TargetType="TextBlock">
+              <Setter Property="FontSize" Value="12"></Setter>
+            </Style>
+          </Grid.Resources>
+
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+
+          <!-- Created at: <time> -->
+          <StackPanel Grid.Row="0" Orientation="Horizontal">
+            <TextBlock Text="Create at:" Margin="0,0,5,0"/>
+            <TextBlock Text="{Binding CreationTime, StringFormat=G}"/>
+          </StackPanel>
+
+          <!-- Processed at: <time> -->
+          <StackPanel Grid.Row="1" Orientation="Horizontal">
+            <StackPanel.Style>
+              <Style TargetType="StackPanel">
+                <Style.Triggers>
+                  <DataTrigger Binding="{Binding ProcessedTime}" Value="{x:Static system:DateTimeOffset.MinValue}">
+                    <Setter Property="Visibility" Value="Collapsed"/>
+                  </DataTrigger>
+                </Style.Triggers>
+              </Style>
+            </StackPanel.Style>
+
+            <TextBlock Text="Processed at:" Margin="0,0,5,0"/>
+            <TextBlock Text="{Binding ProcessedTime, StringFormat=G}" />
+          </StackPanel>
+        </Grid>
       </Grid>
+
     </Grid>
-
-  </Grid>
-
+  </Border>
 </UserControl>

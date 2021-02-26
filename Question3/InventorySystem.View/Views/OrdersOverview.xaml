@@ -19,9 +19,9 @@
 
         <ListView.ItemTemplate>
           <DataTemplate>
-            <Border x:Name="ItemBorder" BorderThickness="2" Margin="5" BorderBrush="Gray" MinHeight="200">
+
               <local:OrderDetails DataContext="{Binding}" />
-            </Border>
+
           </DataTemplate>
         </ListView.ItemTemplate>
       </ListView>
