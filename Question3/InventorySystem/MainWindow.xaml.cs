@@ -22,7 +22,7 @@ namespace InventorySystem
         {
             InitializeComponent();
 
-            inventoryServiceClient = InventoryServiceClientFactory.Instance.CreateAutoRecoveryClient("http://localhost:12345/WCF/InventoryService.svc");
+            inventoryServiceClient = InventoryServiceClientFactory.Instance.CreateAutoRecoveryClient(HardCodedServerInfo.InventoryServiceEndpointUri);
             inventoryMonitor = new InventoryMonitor(this.inventoryServiceClient, this.Dispatcher, Messenger.Default);
 
             this.mainWindowVm = new MainWindowVM();

@@ -4,9 +4,8 @@
     {
         Success = 0,
         Disconnected,
-        ProductCodeNotFound,
+        InvalidArgs,
         InsufficientQuantity,
-        DuplicateProductCode,
 
         // Insert new error codes before ErrorCode.Unknown
         Unknown = 65535,

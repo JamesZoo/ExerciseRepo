@@ -53,6 +53,21 @@ namespace InventorySystem.Client
             }
         }
 
+        public async Task<ProcessOrderResult> ProcessOrderAsync(OrderTransaction orderTransaction)
+        {
+            try
+            {
+                return await this.internalClient.ProcessOrderAsync(orderTransaction).ConfigureAwait(false);
+            }
+            catch (Exception ex) when (ex is CommunicationException || ex is TimeoutException)
+            {
+                this.internalClient.Abort();
+                this.internalClient = factory.CreateClient(endpointUri);
+
+                return new ProcessOrderResult() { ErrorCode = ErrorCode.Disconnected };
+            }
+        }
+
         public void Dispose()
         {
             try
